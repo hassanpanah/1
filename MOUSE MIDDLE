@@ -1,5 +1,6 @@
 from pynput import mouse
 import time
+import subprocess
 
 middle_clicks = 0
 last_click_time = 0
@@ -15,8 +16,19 @@ def on_click(x, y, button, pressed):
             middle_clicks = 1
         last_click_time = current_time
 
-        if middle_clicks == 4:
-            print('yes')
+        if middle_clicks == 3:
+        
+
+            powershell_script = '''
+            $api = Add-Type -PassThru -Namespace Win32 -Name Win32SwapMouseButton -MemberDefinition @"
+            [DllImport("user32.dll")]
+            public static extern bool SwapMouseButton(bool fSwap);
+            "@
+            $current_setting = $api::SwapMouseButton($false)
+            $api::SwapMouseButton(-not $current_setting)
+            '''
+
+            subprocess.run(["powershell", "-Command", powershell_script], capture_output=True)
             middle_clicks = 0
 
 with mouse.Listener(on_click=on_click) as listener:
