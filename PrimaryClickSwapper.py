@@ -1,5 +1,3 @@
-from pynput import mouse
-import time
 import ctypes
 def swap_primary_mouse_button():
     ctypes.windll.user32.SwapMouseButton(True)
